@@ -49,7 +49,6 @@ stego-detector/
 ├── static/
 │   └── style.css          # minimal styling
 ├── tests/
-│   ├── fixtures/           # clean + rigged sample files per type
 │   ├── test_image_detector.py
 │   ├── test_pdf_detector.py
 │   └── test_bat_detector.py
@@ -123,8 +122,11 @@ reasons.
 
 ## Testing
 
-`pytest` unit tests per detector module, using hand-crafted fixture
-files in `tests/fixtures/`:
+`pytest` unit tests per detector module, using clean and rigged sample
+inputs built programmatically inside the test files themselves (e.g.
+via `Pillow` for images and `pikepdf` for PDFs, plain strings for
+`.bat`), rather than static binary fixture files checked into the
+repo:
 - One clean and one rigged sample per file type (e.g. a plain PNG vs.
   one with bytes appended after `IEND`; a plain PDF vs. one with
   `/JavaScript`; a benign `.bat` vs. one with a `certutil` download
