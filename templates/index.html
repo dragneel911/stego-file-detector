@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Suspicious File Detector</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Suspicious File Detector</h1>
+    <p>Upload an image (.png/.jpg/.jpeg), a PDF, or a .bat file to check for signs of hidden data or malicious content.</p>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" required>
+        <button type="submit">Scan</button>
+    </form>
+
+    {% if error %}
+    <p class="error">{{ error }}</p>
+    {% endif %}
+
+    {% if result %}
+    <div class="result">
+        <h2>Result for {{ result.filename }}</h2>
+        {% if result.is_suspicious %}
+        <p class="verdict suspicious">{{ result.findings|length }} suspicious indicator(s) found</p>
+        {% else %}
+        <p class="verdict clean">No suspicious indicators found</p>
+        {% endif %}
+        <ul>
+        {% for finding in result.findings %}
+            <li>{{ finding }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</body>
+</html>
