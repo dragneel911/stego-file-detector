@@ -22,7 +22,7 @@ def scan_image(file_bytes: bytes) -> tuple[bool, list[str]]:
 
 
 def _check_png(data: bytes) -> list[str]:
-    idx = data.find(b"IEND")
+    idx = data.rfind(b"IEND")
     if idx == -1:
         return ["PNG is missing its IEND chunk; file may be corrupted or manipulated"]
     end_of_chunk = idx + 4 + 4  # "IEND" (4 bytes) + CRC (4 bytes)
@@ -33,7 +33,7 @@ def _check_png(data: bytes) -> list[str]:
 
 
 def _check_jpeg(data: bytes) -> list[str]:
-    idx = data.find(b"\xff\xd9")
+    idx = data.rfind(b"\xff\xd9")
     if idx == -1:
         return ["JPEG is missing its end-of-image marker (FFD9); file may be corrupted or manipulated"]
     end_of_marker = idx + 2
