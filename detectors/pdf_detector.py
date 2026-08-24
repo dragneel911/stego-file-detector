@@ -21,6 +21,8 @@ def scan_pdf(file_bytes: bytes) -> tuple[bool, list[str]]:
                             f"Found {key} reference in a PDF object, which can indicate "
                             "embedded scripts or files"
                         )
+    except pikepdf.PasswordError:
+        return (True, ["PDF is password-protected; contents could not be inspected"])
     except pikepdf.PdfError:
         return (True, ["PDF could not be parsed; file may be corrupted or malformed"])
 

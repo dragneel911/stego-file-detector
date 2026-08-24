@@ -47,3 +47,17 @@ def test_unparsable_pdf_is_flagged_not_raised():
     is_suspicious, findings = scan_pdf(b"not a real pdf file")
     assert is_suspicious is True
     assert len(findings) >= 1
+
+
+def _make_password_protected_pdf_bytes():
+    pdf = pikepdf.Pdf.new()
+    pdf.add_blank_page()
+    buf = io.BytesIO()
+    pdf.save(buf, encryption=pikepdf.Encryption(owner="ownerpw", user="userpw"))
+    return buf.getvalue()
+
+
+def test_password_protected_pdf_is_flagged_not_raised():
+    is_suspicious, findings = scan_pdf(_make_password_protected_pdf_bytes())
+    assert is_suspicious is True
+    assert any("password" in f.lower() for f in findings)
