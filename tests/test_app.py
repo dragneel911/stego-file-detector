@@ -1,5 +1,8 @@
 import io
 
+import pikepdf
+from PIL import Image
+
 from app import app
 
 
@@ -50,3 +53,29 @@ def test_post_with_suspicious_bat_shows_indicators():
     assert response.status_code == 200
     assert b"suspicious indicator" in response.data.lower()
     assert b"certutil" in response.data.lower()
+
+
+def test_post_with_rigged_png_shows_indicators():
+    buf = io.BytesIO()
+    Image.new("RGB", (2, 2), color=(10, 20, 30)).save(buf, format="PNG")
+    png_bytes = buf.getvalue() + b"junkdata12345"
+
+    client = app.test_client()
+    data = {"file": (io.BytesIO(png_bytes), "rigged.png")}
+    response = client.post("/", data=data, content_type="multipart/form-data")
+    assert response.status_code == 200
+    assert b"suspicious indicator" in response.data.lower()
+
+
+def test_post_with_rigged_pdf_shows_indicators():
+    pdf = pikepdf.Pdf.new()
+    pdf.add_blank_page()
+    buf = io.BytesIO()
+    pdf.save(buf)
+    pdf_bytes = buf.getvalue() + b"\nEXTRA HIDDEN DATA HERE"
+
+    client = app.test_client()
+    data = {"file": (io.BytesIO(pdf_bytes), "rigged.pdf")}
+    response = client.post("/", data=data, content_type="multipart/form-data")
+    assert response.status_code == 200
+    assert b"suspicious indicator" in response.data.lower()

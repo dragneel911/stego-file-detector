@@ -9,6 +9,7 @@ from detectors.pdf_detector import scan_pdf
 app = Flask(__name__)
 
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
+app.config["MAX_CONTENT_LENGTH"] = MAX_FILE_SIZE
 
 EXTENSION_MAP = {
     ".png": ("image", scan_image),
@@ -58,6 +59,11 @@ def index():
                         error = "This file couldn't be analyzed."
 
     return render_template("index.html", result=result, error=error)
+
+
+@app.errorhandler(413)
+def too_large(_e):
+    return render_template("index.html", result=None, error="File is too large (max 10MB)."), 200
 
 
 if __name__ == "__main__":
