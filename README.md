@@ -4,6 +4,8 @@ A small Flask web app that scans uploaded images, PDFs, and `.bat` files for
 heuristic signs of hidden data or malicious content, and reports a
 suspicious/clean verdict.
 
+![Screenshot of the Suspicious File Detector UI, showing the upload panel and a scan result listing three suspicious indicators found in a .bat file](docs/screenshot.png)
+
 ## What it checks
 
 - **Images (PNG/JPEG):** appended data after the image's real end-of-file
